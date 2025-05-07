@@ -4,3 +4,4 @@ pydantic
 huggingface_hub
 google-generativeai
 Pillow
+python-dotenv
