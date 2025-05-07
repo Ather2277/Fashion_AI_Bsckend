@@ -60,7 +60,7 @@ async def generate_outfit(request: StyleRequest):
 
         return {
             "outfit_description": outfit_description,
-            "image_url": f"http://localhost:8000/generated_images/outfit.png"
+            "image_url": f"https://fashion-ai-bsckend.onrender.com/generated_images/outfit.png"
         }
 
     except Exception as e:
