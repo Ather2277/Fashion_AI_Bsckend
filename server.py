@@ -40,7 +40,7 @@ async def generate_outfit(request: StyleRequest):
         
         # Generate outfit text
         model_name = "tunedModels/outfitsuggestiongenerator-usqw4b296kfe"
-        prompt = f"Create an outfit including Top,Bottoms and Foot wear based on: {request.style_idea} for {request.gender} from {request.ethnicity} , {request.age} years old,hoving {request.skin_color} complexion,to be worne in {request.season}, with {request.accessories} accessories,for {request.occasion} with matching footware and model looking at the camera."
+        prompt = f"Create an outfit as text including Top,Bottoms and Foot wear based on: {request.style_idea} for {request.gender} from {request.ethnicity} , {request.age} years old,hoving {request.skin_color} complexion,to be worne in {request.season}, with {request.accessories} accessories,for {request.occasion} with matching footware and model looking at the camera."
         
         outfit_description = generate_output(model_name, prompt)
         
