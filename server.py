@@ -52,7 +52,7 @@ async def generate_outfit(request: StyleRequest):
         print("Received request:", request.dict())
 
         prompt = (
-            f"Create an outfit as text including top, bottoms, and footwear based on: "
+            f"Create an outfit as text in 20 to 30 words including top, bottoms, and footwear based on: "
             f"{request.style_idea} for a {request.gender} of {request.ethnicity} ethnicity, "
             f"{request.age} years old, with {request.skin_color} skin tone. The outfit should suit "
             f"{request.season} season and include {request.accessories} as accessories for a {request.occasion}. "
