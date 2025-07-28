@@ -1,5 +1,5 @@
 import os
-import requests
+import google.generativeai as genai
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -7,13 +7,10 @@ from image import generate_image
 from fastapi.responses import FileResponse
 
 # ---- Gemini Setup ----
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  # Set in your environment variables
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  # Set this in your environment
+genai.configure(api_key=GEMINI_API_KEY)
 
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {GEMINI_API_KEY}"
-}
+model = genai.GenerativeModel(model_name="gemini-1.5-flash")
 
 # ---- FastAPI Setup ----
 app = FastAPI()
@@ -28,7 +25,7 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return {"message": "FastAPI Gemini server is running!"}
+    return {"message": "FastAPI Gemini SDK server is running!"}
 
 class StyleRequest(BaseModel):
     style_idea: str
@@ -42,25 +39,11 @@ class StyleRequest(BaseModel):
 
 # ---- Gemini-based Text Generator ----
 def generate_outfit_text(prompt: str) -> str:
-    body = {
-        "contents": [
-            {
-                "parts": [
-                    {
-                        "text": prompt
-                    }
-                ]
-            }
-        ]
-    }
-
-    response = requests.post(GEMINI_API_URL, headers=headers, json=body)
-
-    if response.status_code != 200:
-        raise Exception(f"Gemini API Error: {response.status_code} {response.text}")
-
-    data = response.json()
-    return data['candidates'][0]['content']['parts'][0]['text']
+    try:
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception as e:
+        raise Exception(f"Gemini SDK error: {str(e)}")
 
 # ---- Outfit Generator Endpoint ----
 @app.post("/generate-outfit/")
