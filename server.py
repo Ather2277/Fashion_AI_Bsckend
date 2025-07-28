@@ -1,28 +1,35 @@
 import os
+import requests
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from text import generate_output
 from image import generate_image
 from fastapi.responses import FileResponse
 
+# ---- Gemini Setup ----
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  # Set in your environment variables
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {GEMINI_API_KEY}"
+}
+
+# ---- FastAPI Setup ----
 app = FastAPI()
 
-# Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for now (restrict in production)
+    allow_origins=["*"],  # Allow all origins for development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Root Endpoint
 @app.get("/")
 def home():
-    return {"message": "FastAPI server is running!"}
+    return {"message": "FastAPI Gemini server is running!"}
 
-# Define Input Schema
 class StyleRequest(BaseModel):
     style_idea: str
     gender: str
@@ -33,25 +40,58 @@ class StyleRequest(BaseModel):
     accessories: str
     occasion: str
 
+# ---- Gemini-based Text Generator ----
+def generate_outfit_text(prompt: str) -> str:
+    body = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": prompt
+                    }
+                ]
+            }
+        ]
+    }
+
+    response = requests.post(GEMINI_API_URL, headers=headers, json=body)
+
+    if response.status_code != 200:
+        raise Exception(f"Gemini API Error: {response.status_code} {response.text}")
+
+    data = response.json()
+    return data['candidates'][0]['content']['parts'][0]['text']
+
+# ---- Outfit Generator Endpoint ----
 @app.post("/generate-outfit/")
 async def generate_outfit(request: StyleRequest):
     try:
-        print("Received request:", request.dict())  # Debugging
-        
-        # Generate outfit text
-        model_name = "tunedModels/outfitsuggestiongenerator-usqw4b296kfe"
-        prompt = f"Create an outfit as text including Top,Bottoms and Foot wear based on: {request.style_idea} for {request.gender} from {request.ethnicity} , {request.age} years old,hoving {request.skin_color} complexion,to be worne in {request.season}, with {request.accessories} accessories,for {request.occasion} with matching footware and model looking at the camera."
-        
-        outfit_description = generate_output(model_name, prompt)
-        
+        print("Received request:", request.dict())
+
+        prompt = (
+            f"Create an outfit as text including top, bottoms, and footwear based on: "
+            f"{request.style_idea} for a {request.gender} of {request.ethnicity} ethnicity, "
+            f"{request.age} years old, with {request.skin_color} skin tone. The outfit should suit "
+            f"{request.season} season and include {request.accessories} as accessories for a {request.occasion}. "
+            f"The description should be detailed and stylish."
+        )
+
+        outfit_description = generate_outfit_text(prompt)
+
         if not outfit_description:
             raise Exception("Text generation failed. Received empty response.")
 
-        print("Generated outfit description:", outfit_description)  # Debugging
+        print("Generated outfit description:", outfit_description)
 
-        # Generate image
+        # Generate image from text (same logic as your code)
         image_path = "generated_images/outfit.png"
-        generated_image = generate_image(f"a {request.gender} model of age {request.age} from ethinicity {request.ethnicity} with {request.skin_color} complexion see into the camera with perfect lightining and wearing {outfit_description} with complementing background that enhances the outfit and model, full body image")
+        image_prompt = (
+            f"A {request.gender} model, age {request.age}, {request.ethnicity} ethnicity, "
+            f"{request.skin_color} complexion, looking into the camera, perfect lighting, full body, "
+            f"wearing: {outfit_description}. Background should complement the outfit."
+        )
+
+        generated_image = generate_image(image_prompt)
 
         if generated_image is None:
             raise Exception("Image generation failed.")
@@ -64,7 +104,7 @@ async def generate_outfit(request: StyleRequest):
         }
 
     except Exception as e:
-        print("Error in /generate-outfit/:", str(e))  # Debugging
+        print("Error in /generate-outfit/:", str(e))
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 @app.get("/generated_images/{filename}")
