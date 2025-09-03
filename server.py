@@ -52,24 +52,22 @@ async def generate_outfit(request: StyleRequest):
         print("Received request:", request.dict())
 
         prompt = f"""
-            Return the outfit description strictly as valid JSON in the following format:
+                You are a creative fashion designer. Return the outfit description as a stylish paragraph (20–30 words).
 
-            {{
-              "outfit": "20–30 word description here"
-            }}
+                Requirements:
+                    - Must include top, bottoms, and footwear.
+                    - Style idea: {request.style_idea}
+                    - Gender: {request.gender}
+                    - Ethnicity: {request.ethnicity}
+                    - Age: {request.age}
+                    - Skin tone: {request.skin_color}
+                    - Season: {request.season}
+                    - Accessories: {request.accessories}
+                    - Occasion: {request.occasion}
+                    - The description must be balanced, creative, fashion-forward, trendy, and pleasing to both Millennials and Gen Z.
+                    - Write in a natural, flowing tone (not a list).
+                """
 
-            Requirements:
-            - Include top, bottoms, and footwear
-            - Style idea: {request.style_idea}
-            - Gender: {request.gender}
-            - Ethnicity: {request.ethnicity}
-            - Age: {request.age}
-            - Skin tone: {request.skin_color}
-            - Season: {request.season}
-            - Accessories: {request.accessories}
-            - Occasion: {request.occasion}
-            - The description must be stylish, detailed, and between 20–30 words.
-            """
 
 
         outfit_description = generate_outfit_text(prompt)
