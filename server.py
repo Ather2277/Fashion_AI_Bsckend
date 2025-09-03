@@ -51,13 +51,26 @@ async def generate_outfit(request: StyleRequest):
     try:
         print("Received request:", request.dict())
 
-        prompt = (
-            f"Create an outfit as text in 20 to 30 words including top, bottoms, and footwear based on: "
-            f"{request.style_idea} for a {request.gender} of {request.ethnicity} ethnicity, "
-            f"{request.age} years old, with {request.skin_color} skin tone. The outfit should suit "
-            f"{request.season} season and include {request.accessories} as accessories for a {request.occasion}. "
-            f"The description should be detailed and stylish."
-        )
+        prompt = f"""
+            Return the outfit description strictly as valid JSON in the following format:
+
+            {{
+              "outfit": "20–30 word description here"
+            }}
+
+            Requirements:
+            - Include top, bottoms, and footwear
+            - Style idea: {request.style_idea}
+            - Gender: {request.gender}
+            - Ethnicity: {request.ethnicity}
+            - Age: {request.age}
+            - Skin tone: {request.skin_color}
+            - Season: {request.season}
+            - Accessories: {request.accessories}
+            - Occasion: {request.occasion}
+            - The description must be stylish, detailed, and between 20–30 words.
+            """
+
 
         outfit_description = generate_outfit_text(prompt)
 
@@ -68,11 +81,23 @@ async def generate_outfit(request: StyleRequest):
 
         # Generate image from text (same logic as your code)
         image_path = "generated_images/outfit.png"
-        image_prompt = (
-            f"A {request.gender} model, age {request.age}, {request.ethnicity} ethnicity, "
-            f"{request.skin_color} complexion, looking into the camera, perfect lighting, full body, "
-            f"wearing: {outfit_description}. Background should complement the outfit."
-        )
+        image_prompt = f"""
+                Return the response strictly as valid JSON in the following format:
+
+                {{
+                "image_prompt": "A detailed image generation prompt here"
+                }}
+
+                Requirements:
+                - Gender: {request.gender}
+                - Age: {request.age}
+                - Ethnicity: {request.ethnicity}
+                - Skin complexion: {request.skin_color}
+                - The model should be looking into the camera, full body, with perfect lighting.
+                - Outfit: {outfit_description}
+                - Background should complement the outfit.
+                """
+
 
         generated_image = generate_image(image_prompt)
 
