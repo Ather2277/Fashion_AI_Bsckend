@@ -80,21 +80,23 @@ async def generate_outfit(request: StyleRequest):
         # Generate image from text (same logic as your code)
         image_path = "generated_images/outfit.png"
         image_prompt = f"""
-                Return the response strictly as valid JSON in the following format:
+            Return the response strictly as valid JSON in the following format:
 
-                {{
-                "image_prompt": "A detailed image generation prompt here"
-                }}
+            {{
+              "image_prompt": "A detailed image generation prompt here"
+            }}
 
-                Requirements:
-                - Gender: {request.gender}
-                - Age: {request.age}
-                - Ethnicity: {request.ethnicity}
-                - Skin complexion: {request.skin_color}
-                - The model should be looking into the camera, full body, with perfect lighting.
-                - Outfit: {outfit_description}
-                - Background should complement the outfit.
-                """
+            Requirements:
+            - Gender: {request.gender}
+            - Age: {request.age}
+            - Ethnicity: {request.ethnicity}
+            - Skin complexion: {request.skin_color}
+            - The model should be captured in a **full-body shot from head to toe**, facing the camera, with perfect studio-like lighting.
+            - Outfit: {outfit_description}
+            - Background should complement and enhance the outfit style, without distracting from the subject.
+            - Ensure clear visibility of the entire outfit, footwear, and accessories.
+            """
+
 
 
         generated_image = generate_image(image_prompt)
