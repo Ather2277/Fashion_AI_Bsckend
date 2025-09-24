@@ -17,7 +17,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
+    allow_origins=["https://www.suvastra.cloud","https://suvastra.cloud","http://localhost:3000","http://127.0.0.1:3000","www.suvastra.cloud","suvastra.cloud"],  # Allow all origins for development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
