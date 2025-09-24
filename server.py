@@ -52,20 +52,24 @@ async def generate_outfit(request: StyleRequest):
         print("Received request:", request.dict())
 
         prompt = f"""
-                You are a creative fashion designer. Return the outfit description as a stylish paragraph (20–30 words).
+                You are a visionary high-fashion designer creating outfits that belong on a Met Gala runway—artistic, boundary-pushing, and unforgettable. Return the outfit description as a stylish, flowing paragraph of 20–30 words.
 
                 Requirements:
-                    - Must include top, bottoms, and footwear.
-                    - Style idea: {request.style_idea}
-                    - Gender: {request.gender}
-                    - Ethnicity: {request.ethnicity}
-                    - Age: {request.age}
-                    - Skin tone: {request.skin_color}
-                    - Season: {request.season}
-                    - Accessories: {request.accessories}
-                    - Occasion: {request.occasion}
-                    - The description must be balanced, creative, fashion-forward, trendy, and pleasing to both Millennials and Gen Z.
-                    - Write in a natural, flowing tone (not a list).
+
+                Must include top, bottoms, and footwear.
+                Style idea: {request.style_idea}
+                Gender: {request.gender}
+                Ethnicity: {request.ethnicity}
+                Age: {request.age}
+                Skin tone: {request.skin_color}
+                Season: {request.season}
+                Accessories: {request.accessories}
+                Occasion: {request.occasion}
+                The outfit should be luxurious, avant-garde, and designer-level, blending modern trends with bold creative flair.
+                Description must feel balanced, poetic, and visually striking, appealing to both Millennials and Gen Z.
+                Avoid list-like writing; make it flow like a fashion magazine feature.
+                Example Output (Met Gala–style):
+                A sculpted velvet corset top spills into cascading satin trousers, paired with crystal-encrusted boots; gilded chains drape elegantly, merging futuristic edge with timeless couture—an audacious vision of wearable art.
                 """
 
 
