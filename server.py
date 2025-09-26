@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  # Set this in your environment
 genai.configure(api_key=GEMINI_API_KEY)
 
-model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+model = genai.GenerativeModel(model_name="gemini-2.5-flash")
 
 # ---- FastAPI Setup ----
 app = FastAPI()
