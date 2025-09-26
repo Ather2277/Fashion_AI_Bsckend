@@ -10,7 +10,24 @@ from fastapi.responses import FileResponse
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  # Set this in your environment
 genai.configure(api_key=GEMINI_API_KEY)
 
-model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+# Prefer a stable, generally available model; fall back if unavailable
+_MODEL_CANDIDATES = [
+    "gemini-1.5-flash-002",
+    "gemini-1.5-flash-001",
+    "gemini-1.5-flash",
+]
+
+def _create_model():
+    last_error = None
+    for name in _MODEL_CANDIDATES:
+        try:
+            return genai.GenerativeModel(model_name=name)
+        except Exception as e:
+            last_error = e
+            continue
+    raise last_error if last_error else RuntimeError("No Gemini model available")
+
+model = _create_model()
 
 # ---- FastAPI Setup ----
 app = FastAPI()
@@ -43,6 +60,7 @@ def generate_outfit_text(prompt: str) -> str:
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
+        # Surface a clearer error for frontend while keeping details in logs
         raise Exception(f"Gemini SDK error: {str(e)}")
 
 # ---- Outfit Generator Endpoint ----
