@@ -52,7 +52,7 @@ async def generate_outfit(request: StyleRequest):
         print("Received request:", request.dict())
 
         prompt = f"""
-                You are a visionary high-fashion designer creating outfits that belong on a Met Gala runway—artistic, boundary-pushing, and unforgettable. Return the outfit description as a stylish, flowing paragraph of 20–30 words.
+                You are a visionary high-fashion designer creating outfits that belong on a Met Gala runway—artistic, boundary-pushing, and unforgettable. Return the outfit description as a stylish, flowing paragraph of 50–100 words.
 
                 Requirements:
 
